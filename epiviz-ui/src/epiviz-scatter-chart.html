@@ -1,0 +1,183 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<script src="../bower_components/jquery/dist/jquery.js"></script>
+<script src="../bower_components/d3/d3.js"></script>
+
+<dom-module id="epiviz-scatter-chart">
+
+    <template>
+
+    <style>
+        /* local DOM styles go here */
+        :host {
+            display: inline-block;
+        }
+        
+        .axis path, .axis line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+
+        .dot {
+            stroke: #000;
+        }
+    </style>
+
+    <!-- local DOM goes here -->
+    <div id="epivizScatterChart"></div>
+  </template>
+
+    <script>
+        Polymer({
+            /* Custom element html tag */
+            is: 'epiviz-scatter-chart',
+
+            /* Properties that can be defined on the element */
+            properties: {
+                data: {
+                    type: Array,
+                    notify: true
+                },
+                dataX: {
+                    type: String,
+                    notify: true
+                },
+                dataY: {
+                    type: String,
+                    notify: true
+                }
+            },
+
+            observers: [
+                '_dataChanged(data.*)'
+            ],
+
+            /* constructor 
+            created: function(url, dataSource) {
+              this.dataUrl = url;
+              this.dataSource = dataSource;
+            },*/
+
+            /* callback function after the element is initialized */
+            ready: function() {
+                this.scopeSubtree(this.$.epivizScatterChart, true);
+                if(this.data != null && this.data.length > 0 ) {
+                    this._draw();    
+                }
+            },
+
+            _dataChanged: function(newVal, oldVal) {
+                if(this.data != null && this.data.length > 0 ) {
+                    this._draw();    
+                }
+            },
+
+            _draw: function() {
+
+                var self = this;
+
+                var margin = {
+                        top: 20,
+                        right: 20,
+                        bottom: 30,
+                        left: 40
+                    },
+                    width = 960 - margin.left - margin.right,
+                    height = 500 - margin.top - margin.bottom,
+                    color = d3.scale.category20c();
+
+                var x = d3.scale.linear()
+                    .range([0, width]);
+
+                var y = d3.scale.linear()
+                    .range([height, 0]);
+
+                var tdata = self.data;
+
+                var xAxis = d3.svg.axis()
+                    .scale(x)
+                    .orient("bottom");
+
+                var yAxis = d3.svg.axis()
+                    .scale(y)
+                    .orient("left");
+
+                var el = d3.select(this.$.epivizScatterChart);
+                el.selectAll('svg').remove();
+
+                var svg = d3.select(this.$.epivizScatterChart).append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
+                    .append("g")
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+                x.domain(d3.extent(tdata, function(d) {
+                    return d[self.dataX];
+                })).nice();
+                y.domain(d3.extent(tdata, function(d) {
+                    return d[self.dataY];
+                })).nice();
+
+                svg.append("g")
+                    .attr("class", "x axis")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(xAxis)
+                    .append("text")
+                    .attr("class", "label")
+                    .attr("x", width)
+                    .attr("y", -6)
+                    .style("text-anchor", "end")
+                    .text("X (var1)");
+
+                svg.append("g")
+                    .attr("class", "y axis")
+                    .call(yAxis)
+                    .append("text")
+                    .attr("class", "label")
+                    .attr("transform", "rotate(-90)")
+                    .attr("y", 6)
+                    .attr("dy", ".71em")
+                    .style("text-anchor", "end")
+                    .text("Y (var2)");
+
+                svg.selectAll(".dot")
+                    .data(tdata)
+                    .enter().append("circle")
+                    .attr("class", "dot")
+                    .attr("r", 3.5)
+                    .attr("cx", function(d) {
+                        return x(d[self.dataX]);
+                    })
+                    .attr("cy", function(d) {
+                        return y(d[self.dataY]);
+                    })
+                    .style("fill", function(d) {
+                        return color(d.z);
+                    });
+
+                var legend = svg.selectAll(".legend")
+                    .data(color.domain())
+                    .enter().append("g")
+                    .attr("class", "legend")
+                    .attr("transform", function(d, i) {
+                        return "translate(0," + i * 20 + ")";
+                    });
+
+                legend.append("rect")
+                    .attr("x", width - 18)
+                    .attr("width", 18)
+                    .attr("height", 18)
+                    .style("fill", color);
+
+                legend.append("text")
+                    .attr("x", width - 24)
+                    .attr("y", 9)
+                    .attr("dy", ".35em")
+                    .style("text-anchor", "end")
+                    .text(function(d) {
+                        return d;
+                    });
+            }
+        });
+    </script>
+</dom-module>

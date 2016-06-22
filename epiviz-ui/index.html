@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+  <head>
+    <!-- import latest release version of all components from polygit -->
+    <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    
+    <link rel="import" href="src/epiviz-ui.html">
+   
+  </head>
+  <body>
+    <div>
+      <h3>Method 1 - separate components - dom-binding</h3>
+        <!-- <template id="source1" is="dom-bind">
+          <epiviz-data data-url="http://localhost:8081/data/data.json" data-response="{{srcData}}">
+          </epiviz-data>
+          <epiviz-scatter-chart data="{{srcData}}" data-x="x" data-y="y">
+          </epiviz-scatter-chart>
+        </template>-->
+    </div>
+    <div>
+      <h3>Method 2 - using localstorage</h3>
+    </div>
+    <div>
+      <h3>Method 3 - using iron-meta</h3>
+    </div>
+    <div>
+      <h3>Method 4 - combine data and chart into a ui element</h3>
+        <h4>using data.json (1000 elements)</h4>
+      <epiviz-ui from-url="http://localhost:8081/data/data.json" chart-list='[[scatter, x, y],[bar, x, y]]'></epiviz-ui>
+        <h4>using data2.json (100 elements)</h4>
+      <epiviz-ui from-url="http://localhost:8081/data/data2.json" chart-list='[{"chartType": "scatter", "xAxis": "x", "yAxis": "y"},{"chartType": "bar", "xAxis": "x", "yAxis": "y"}]'></epiviz-ui>
+    </div>
+  </body>
+</html>

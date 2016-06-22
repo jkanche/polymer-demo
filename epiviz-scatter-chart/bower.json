@@ -1,0 +1,27 @@
+{
+  "name": "epiviz-chart",
+  "authors": [
+    "Jayaram Kancherla <jayaram.kancherla@gmail.com>"
+  ],
+  "description": "epiviz chart library",
+  "main": "",
+  "keywords": [
+    "epiviz",
+    "chart"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "^1.5.0",
+    "jquery": "^2.2.4",
+    "d3": "^3.5.17"
+  }
+}

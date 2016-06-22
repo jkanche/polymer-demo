@@ -1,0 +1,56 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<script src="../bower_components/jquery/dist/jquery.js"></script>
+
+<!-- import chart and data components -->
+<link rel="import" href="epiviz-data.html">
+<link rel="import" href="epiviz-scatter-chart.html">
+<link rel="import" href="epiviz-bar-chart.html">
+
+<dom-module id="epiviz-ui">
+
+    <template>
+
+    <style>
+      /* local DOM styles go here */
+      :host {
+        display: inline-block;
+      }
+    </style>
+
+    <!-- local DOM goes here -->
+    <epiviz-data data-url="{{fromUrl}}" data-response="{{fromData}}"></epiviz-data>
+    <!--ideally, you would iterate chart list and use the dom-repeat helper elem to create various charts -->
+    <epiviz-scatter-chart cid="1" data="[[fromData]]" data-x='x' data-y='y'></epiviz-scatter-chart>
+    <epiviz-bar-chart cid="2" data="[[fromData]]"  data-x='z' data-y='y'></epiviz-bar-chart >
+    <epiviz-scatter-chart cid="3" data="[[fromData]]" data-x='y' data-y='x'></epiviz-scatter-chart>
+  </template>
+
+    <script>
+        Polymer({
+            /* Custom element html tag */
+            is: 'epiviz-ui',
+
+            /* Properties that can be defined on the element */
+            properties: {
+                fromUrl: {
+                    type: String,
+                    notify: true
+                },
+                chartList: {
+                    type: String,
+                    notify: true
+                },
+            },
+
+            /* constructor 
+            created: function(url, dataSource) {
+              this.dataUrl = url;
+              this.dataSource = dataSource;
+            },*/
+
+            /* callback function after the element is initialized */
+            ready: function() {
+            }
+        });
+    </script>
+</dom-module>

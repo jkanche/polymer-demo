@@ -1,0 +1,165 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<script src="../bower_components/jquery/dist/jquery.js"></script>
+<script src="../bower_components/d3/d3.js"></script>
+
+<dom-module id="epiviz-bar-chart">
+
+    <template>
+
+    <style>
+        /* local DOM styles go here */
+        :host {
+            display: inline-block;
+        }
+        
+        .bar {
+            fill: steelblue;
+        }
+
+        .bar:hover {
+            fill: brown;
+        }
+
+        .axis {
+            font: 10px sans-serif;
+        }
+
+        .axis path, .axis line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+
+        .x.axis path {
+        display: none;
+        }
+    </style>
+
+    <!-- local DOM goes here -->
+    <div id="epivizBarChart"></div>
+  </template>
+
+    <script>
+        Polymer({
+            /* Custom element html tag */
+            is: 'epiviz-bar-chart',
+
+            /* Properties that can be defined on the element */
+            properties: {
+                data: {
+                    type: Array,
+                    notify: true
+                },
+                dataX: {
+                    type: String,
+                    notify: true
+                },
+                dataY: {
+                    type: String,
+                    notify: true
+                }
+            },
+
+            observers: [
+                '_dataChanged(data.*)'
+            ],
+
+            /* constructor 
+            created: function(url, dataSource) {
+              this.dataUrl = url;
+              this.dataSource = dataSource;
+            },*/
+
+            /* callback function after the element is initialized */
+            ready: function() {
+                this.scopeSubtree(this.$.epivizBarChart, true);
+                if (this.data != null && this.data.length > 0) {
+                    this._draw();
+                }
+            },
+
+            _dataChanged: function(newVal, oldVal) {
+                if (this.data != null && this.data.length > 0) {
+                    this._draw();
+                }
+            },
+
+            _draw: function() {
+
+                var self = this;
+
+                var margin = {
+                        top: 20,
+                        right: 20,
+                        bottom: 30,
+                        left: 40
+                    },
+                    width = 960 - margin.left - margin.right,
+                    height = 500 - margin.top - margin.bottom;
+
+                var x = d3.scale.ordinal()
+                    .rangeRoundBands([0, width], .1);
+
+                var y = d3.scale.linear()
+                    .range([height, 0]);
+
+                var xAxis = d3.svg.axis()
+                    .scale(x)
+                    .orient("bottom");
+
+                var yAxis = d3.svg.axis()
+                    .scale(y)
+                    .orient("left");
+
+                var tdata = self.data;
+
+                var el = d3.select(this.$.epivizBarChart);
+                el.selectAll('svg').remove();
+
+                var svg = d3.select(this.$.epivizBarChart).append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
+                    .append("g")
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+                x.domain(tdata.map(function(d) {
+                    return d[self.dataX];
+                }));
+                
+                y.domain([0, d3.max(tdata, function(d) {
+                    return d[self.dataY];
+                })]);
+
+                svg.append("g")
+                    .attr("class", "x axis")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(xAxis);
+
+                svg.append("g")
+                    .attr("class", "y axis")
+                    .call(yAxis)
+                    .append("text")
+                    .attr("transform", "rotate(-90)")
+                    .attr("y", 6)
+                    .attr("dy", ".71em")
+                    .style("text-anchor", "end")
+                    .text("Y (var 2)");
+
+                svg.selectAll(".bar")
+                    .data(tdata)
+                    .enter().append("rect")
+                    .attr("class", "bar")
+                    .attr("x", function(d) {
+                        return x(d[self.dataX]);
+                    })
+                    .attr("width", x.rangeBand())
+                    .attr("y", function(d) {
+                        return y(d[self.dataY]);
+                    })
+                    .attr("height", function(d) {
+                        return height - y(d[self.dataY]);
+                    });
+            }
+        });
+    </script>
+</dom-module>

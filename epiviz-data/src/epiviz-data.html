@@ -1,0 +1,63 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<script src="../bower_components/jquery/dist/jquery.js"></script>
+
+<dom-module id="epiviz-data">
+
+  <template>
+
+    <style>
+      /* local DOM styles go here */
+      :host {
+        display: inline-block;
+      }
+    </style>
+
+    <!-- local DOM goes here -->
+    <span>data from - {{dataUrl}}</span><br/>
+    <span>data response length - {{dataResponse.length}}</span>
+  </template>
+
+  <script>
+    Polymer({
+      /* Custom element html tag */
+      is: 'epiviz-data',
+
+      /* Properties that can be defined on the element */
+      properties: {
+        dataUrl: {
+          type: String,
+          notify: true
+        },
+        dataSource: {
+          type: String,
+          value: 'epiviz_temp'
+        },
+        dataResponse: {
+          type: Array,
+          //computed: 'getData(dataUrl)',
+          value: function() {
+            return [];
+          },
+          notify: true
+        }
+      },
+
+      /* constructor 
+      created: function(url, dataSource) {
+        this.dataUrl = url;
+        this.dataSource = dataSource;
+      },*/
+
+      /* callback function after the element is initialized */
+      ready: function() {
+
+        var self = this;
+
+        $.get(this.dataUrl, function(json) {
+          console.log(json);
+          self.dataResponse = json || [];
+        });
+      }
+    });
+  </script>
+</dom-module>

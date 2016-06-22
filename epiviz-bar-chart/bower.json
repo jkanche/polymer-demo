@@ -1,0 +1,28 @@
+{
+  "name": "epiviz-bar-chart",
+  "authors": [
+    "Jayaram Kancherla <jayaram.kancherla@gmail.com>"
+  ],
+  "description": "epiviz bar chart",
+  "main": "",
+  "keywords": [
+    "epiviz",
+    "chart",
+    "bar"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "d3": "^3.5.17",
+    "polymer": "^1.5.0",
+    "jquery": "^2.2.4"
+  }
+}
