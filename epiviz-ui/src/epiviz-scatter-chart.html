@@ -24,7 +24,6 @@
     </style>
 
     <!-- local DOM goes here -->
-    <div id="epivizScatterChart"></div>
   </template>
 
     <script>
@@ -45,7 +44,23 @@
                 dataY: {
                     type: String,
                     notify: true
+                },
+                plotId: {
+                    type: String,
+                    notify: true
                 }
+            },
+
+            // taken from epiviz.utils
+            generateGUID: function(size) {
+                var chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                var result = '';
+
+                for (var i = 0; i < size; ++i) {
+                    result += chars[Math.round(Math.random() * (chars.length - 1))];
+                }
+
+                return result;
             },
 
             observers: [
@@ -60,7 +75,15 @@
 
             /* callback function after the element is initialized */
             ready: function() {
-                this.scopeSubtree(this.$.epivizScatterChart, true);
+
+                this.plotId = this.generateGUID(6);
+
+                var container = document.createElement('div');
+                container.id = this.plotId;
+
+                Polymer.dom(this.root).appendChild(container);
+
+                this.scopeSubtree(this.$$('#' + this.plotId), true);
                 if(this.data != null && this.data.length > 0 ) {
                     this._draw();    
                 }
@@ -102,10 +125,12 @@
                     .scale(y)
                     .orient("left");
 
-                var el = d3.select(this.$.epivizScatterChart);
+                var domNode = this.$$('#' + this.plotId);
+
+                var el = d3.select(domNode);
                 el.selectAll('svg').remove();
 
-                var svg = d3.select(this.$.epivizScatterChart).append("svg")
+                var svg = d3.select(domNode).append("svg")
                     .attr("width", width + margin.left + margin.right)
                     .attr("height", height + margin.top + margin.bottom)
                     .append("g")
